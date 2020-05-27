@@ -1,0 +1,82 @@
+#+TITLE: Create a repo for cryptokasten card
+#+PROPERTY: header-args:sh :session *shell create-a-repo-for-cryptokasten-card sh* :results silent raw
+#+PROPERTY: header-args:python :session *shell create-a-repo-for-cryptokasten-card python* :results silent raw
+
+** Shebang
+
+#+BEGIN_SRC python :tangle src/create_zet.py
+#!/usr/bin/env python
+#+END_SRC
+
+** Imports
+
+#+BEGIN_SRC python :tangle src/create_zet.py
+import os
+import sys
+import secret
+
+from jinja2 import Template
+#+END_SRC
+
+** Template
+
+#+BEGIN_SRC python :tangle src/create_zet.py
+tpl = """#+TITLE: {{ title }}
+#+OPTIONS: ^:nil
+#+PROPERTY: header-args:sh :session *shell {{ slug }} sh* :results silent raw
+#+PROPERTY: header-args:python :session *shell {{ slug }} python* :results silent raw
+
+ ** System environment
+
+ ** References
+
+"""
+#+END_SRC
+
+** Lab dir
+
+#+BEGIN_SRC python :tangle src/create_zet.py
+LIB_DIR = "/data/Lab"
+#+END_SRC
+
+** Convert title to file name
+
+#+BEGIN_SRC python :tangle src/create_zet.py
+def convert_title_to_file_name(title, delimeter="-"):
+    res = []
+    tmp = ""
+    for c in title:
+        if c.isalnum():
+            tmp += c.lower()
+        else:
+            if tmp:
+                res.append(tmp)
+            tmp = ""
+    if tmp:
+        res.append(tmp)
+    return delimeter.join(res)
+#+END_SRC
+
+** Create zet
+
+#+BEGIN_SRC python :tangle src/create_zet.py
+def create_zet(title):
+    slug = convert_title_to_file_name(title)
+    dirname = os.path.join(LIB_DIR, slug)
+    # create dir
+    os.mkdir(dirname)
+    # create README.org
+    fn = os.path.join(dirname, "README.org")
+    t = Template(tpl)
+    content = t.render(title=title, slug=slug)
+    f = open(fn, "wt")
+    f.write(content)
+    f.close()
+#+END_SRC
+
+** Main
+
+#+BEGIN_SRC python :tangle src/create_zet.py
+if __name__ == '__main__':
+    create_zet(sys.argv[1])
+#+END_SRC
