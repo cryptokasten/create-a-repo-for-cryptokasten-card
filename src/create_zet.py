@@ -7,13 +7,15 @@ import secret
 from jinja2 import Template
 
 tpl = """#+TITLE: {{ title }}
-#+OPTIONS: ^:nil
+#+DESCRIPTION:
+#+TAGS: 
 #+PROPERTY: header-args:sh :session *shell {{ slug }} sh* :results silent raw
 #+PROPERTY: header-args:python :session *shell {{ slug }} python* :results silent raw
+#+OPTIONS: ^:nil
 
- ** System environment
+** System environment
 
- ** References
+** References
 
 """
 
